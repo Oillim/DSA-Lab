@@ -57,25 +57,26 @@ void insertTrie(trie *root, string s)
     //cout<<"created at: "<<calcIndex(s.substr(previd,s.length()-1))<<endl;
     p->strend = true;
 }
-bool searchTrie(trie *root,string s)
+void searchTrie(trie *root,string s,string &path)
 {
-    trie *tmp =root;
+    
     int pos = ('\\'+calcIndex(s))%256;
-    string path;
     for (int i=0;i<255;i++)
     {
-        if(tmp->child[pos]!=NULL)
+        if(root->child[pos]!=NULL)
         {
-            cout<<"FOUND PATH: "<<path+"\\"+s<<endl;
-            return true;
+            path+="\\"+s;
+            cout<<path;
+            break;
         }
-        if(tmp->child[i]!=NULL) 
+        if(root->child[i]!=NULL) 
         {
-            path+=tmp->child[i]->data;
-            tmp = tmp->child[i];
+            path+=root->child[i]->data;
+            
+            searchTrie(root->child[i],s,path);
+            path = path.substr(0,path.find_last_of('\\'));
         }
     }
-    return false;
 }
 string repeatString(string s,int k)
 {
@@ -150,6 +151,6 @@ int main()
         //cout<<sv[i]<<endl;
         insertTrie(root,sv[i]);
     }
-    if(searchTrie(root,"hkfkjasf.txt") ==false) cout<<"NOT FOUND PATH";
+    searchTrie(root,"252133026_331347472132076_7812035739552850083_n.png",ss);
     return 0;
 }
