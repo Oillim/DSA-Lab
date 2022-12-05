@@ -1,6 +1,8 @@
 #include <Windows.h>
 #include <iostream>
 #include<vector>
+#include<algorithm>
+#include<direct.h>
 using namespace std;
 vector<string> sv;
 struct trie{
@@ -139,18 +141,58 @@ void findFiles(string path,int k,vector<string> &sv)
 //     }
 // }
 
+void createFolder(string filefrom, string fileto,int k)
+{
+    
+    string folder =fileto + filefrom.substr(filefrom.find_last_of('\\'),k);
+    if(mkdir(folder.c_str())!=-1)
+    cout<<"file created"<<endl;
+    string str = "move \""+ filefrom+ "\"" + " \""+fileto + filefrom.substr(filefrom.find_last_of('\\'),k)+"\"" ;
+    const char *c = str.c_str();
+    system(c); 
+}
 int main()
 {
-    string filepath = "E:\\txt";
-    string ss="";
+    string filepath = "E:\\unordered";
+    string fileto = "E:\\ordered";
+    string ss=""; 
+    int count=1;  
     trie *root = createNode(filepath);
     findFiles(filepath,0,sv);
+    //createFolder();
 
     for (int i=0;i<sv.size();i++)
     {
-        //cout<<sv[i]<<endl;
-        insertTrie(root,sv[i]);
+        cout<<sv[i]<<endl;
+        //insertTrie(root,sv[i]);
     }
-    searchTrie(root,"252133026_331347472132076_7812035739552850083_n.png",ss);
+    for (int i=0;i<sv.size();i++)
+    createFolder(sv[i],fileto,2);
+    sv.clear();
+    findFiles(fileto,0,sv);
+    for (int i=0;i<sv.size();i++)
+    {
+        cout<<sv[i]<<endl;
+        //insertTrie(root,sv[i]);
+    } 
+    for (int i=0;i<sv.size();i++)
+    {
+        if(sv[i].find('.')==std::string::npos)
+        {
+            int count=0;
+            for (int j=i+1;j<sv.size();j++)
+            {
+                if(sv[j].find(sv[i])!=std::string::npos) count++; 
+            }
+            cout<<count<<endl;
+            if(count>3)
+            for (int j=i+1;j<sv.size();j++)
+            {
+                if(sv[j].find(sv[i])!=std::string::npos) createFolder(sv[j],sv[i],3);
+            }
+        }
+    }
+    
+    //searchTrie(root,"main.txt",ss);
     return 0;
-}
+}   
